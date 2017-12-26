@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 # First file editing:
-# 24-09-2016 16h20:45 (UTC+1)
+# 24-09-2016 23h33:00 (UTC+1)
 #
 # Copyright (c) 2016, Samuel Prevost <samuel.prevost@gmx.com>
 # All rights reserved.
@@ -32,88 +32,107 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Import modules for CGI handling
+import cgi, cgitb
 from cmath import *
-import sys
+
+print "Content-type:text/html\r\n\r\n"
+
+print "<html>"
+print "<head>"
+print "<meta charset=\"utf-8\">"
+print "<title>CanoniPy V2.0 - Par Samuel Prevost</title>"
+print "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">"
+print "<style> .bigger { font-size: 2em; } input { width: 50px;} .smaller { font-size: 0.6em;} .top{border-bottom:solid black 1px; display:inline-block; float:left; text-align: center;} .bottom{ display:inline-block; clear:left; float:left; text-align: center;} body { padding-left: 30px; }</style>"
+print "<script type=\"text/javascript\" async src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
+print "</head>"
+print "<body>"
+print "<h2> CanoniPy V3.0 - Par Samuel Prevost </h2>"
+print "<h3>Algorithme de résolution de polynômes du second degré</h3>"
+print "<h4>Avantages:</h4>"
+print "<ul>"
+print "<li>Très rapide</li>"
+print "<li>Supporte aussi bien les nombres réels que les nombres complexes</li>"
+print "<li>Permet de tester la concordance de la forme canonique et développée</li>"
+print "<li>Testé et fiable</li>"
+print "<li>Simple d'utilisation</li>"
+print "</ul></br><hr>"
+
+print "</br>"
+print "<h2>Entrez le polynôme à tester :</h2>"
+print "<form method=\"GET\"><h1><input name=\"a\" value=\"2\">`x^2+`<input name=\"b\" value=\"9\">`x+`<input name=\"c\" value=\"1\"></h2>"
+print "</br><button type=\"submit\">Inspecter</button></form></br>"
+print "<hr>"
 
 try:
-    a = complex(sys.argv[1])
-    b = complex(sys.argv[2])
-    c = complex(sys.argv[3])
+    # Create instance of FieldStorage
+    form = cgi.FieldStorage()
+
+    # Get data from fields
+
+    a = complex(form.getvalue('a'))
+    b = complex(form.getvalue('b'))
+    c = complex(form.getvalue('c'))
 except:
-    print("Syntaxe: \"python canonipy.py a b c\" \n a, b et c sont les coefficients du polynôme du second degré de forme: \n ax^2 + bx + c \n Les nombres complexes sont notés a + bj avec j^2 = -1 et (a,b) € |R")
+    print "<h4>a, b et c sont les coefficients du polynôme du second degré de forme</h4>"
+    print "<i>ax&sup2; + bx + c </i></br>"
+    print "<p>Les nombres complexes sont notés a + bj avec j&sup2; = -1 et (a,b) € |R</p>"
+    print "<hr>"
+    print "<center><i class=\"text-muted smaller\">Écrit à 1h du mat, un dimanche matin/samedi soir, à moitié saoul</i></center>"
+    print "</body>"
+    print "</html>"
     exit()
 
-
-print "###############################################################################"
-print "CanoniPy V1.0 - Par Samuel Prevost"
-print "Algorithme de résolution de polynômes du second degré"
-print "Avantages:"
-print "- Très rapide"
-print "- Supporte aussi bien les nombres réels que les nombres complexes"
-print "- Permet de tester la concordance de la forme canonique et développée"
-print "- Testé et fiable"
-print "- Simple d'utilisation"
 
 if a.imag == 0 and b.imag == 0 and c.imag == 0:
     a = a.real
     b = b.real
     c = c.real
 
-print "Propriétés de %sx^2 + %sx +%s :\n" % (a, b, c)
+print "<h2>Propriétés de `{}x^2+{}x+{} = 0`</h2>".format(a, b, c)
 
+print "<ul>"
 delta = pow(b, 2) - (4 * a * c)
-print "Delta = %s" % str(delta)
+print "<li> <span class=\"bigger\">`\\Delta = {}{:+}j`</span></li>".format(delta.real, delta.imag)
 
 alpha = -1 * (b / (2 * a))
-print "Alpha = %s" % str(alpha)
+print "<li> <span class=\"bigger\">`\\alpha = {}{:+}j`</span></li>".format(alpha.real, alpha.imag)
 
 beta = -1 * (delta / (4 * a))
-print "Beta = %s \n" % str(beta)
+print "<li> <span class=\"bigger\">`\\beta = {}{:+}j`</span></li>".format(beta.real, beta.imag)
 
 if alpha.imag == 0 and beta.imag == 0 and delta.imag == 0:
     alpha = alpha.real
     beta = beta.real
     delta = delta.real
 
-canonique = "%s(x - %s)^2 + %s" % (str(a), str(alpha), str(beta))
-print "Forme canonique :\n%s" % canonique
-
 r1 = (-b-sqrt(delta))/(2*a)
 r2 = (-b+sqrt(delta))/(2*a)
 
 if(delta.real >= 0 and a.imag == 0 and b.imag == 0 and c.imag == 0):
-    print "\tRacine 1 = (-%s - sqrt(%s)) / (2*%s) = %s" % (str(b), str(delta), str(a), str(r1.real))
-    print "\tRacine 2 = (-%s + sqrt(%s)) / (2*%s) = %s" % (str(b), str(delta), str(a), str(r2.real))
+    canonique = "`{}(x {:+})^2 {:+}`".format(a, -alpha, beta)
+    print "<li><h3>Forme canonique :</h3> <span class=\"bigger\">{}</span></li></br></br>".format(canonique)
+    print "<li><h3>Racine 1 : </h3><span class=\"bigger\">`x_1 = (-{}-sqrt({}))/(2*{})={} `</span></li></br></br>".format(b, delta, a, r1.real)
+    print "<li><h3>Racine 2 : </h3><span class=\"bigger\">`x_2 = (-{}+sqrt({}))/(2*{})={} `</span></li></br></br>".format(b, delta, a, r2.real)
+    print "<li><h3>Forme factorisée :</h3> <span class=\"bigger\">`{}(x {:+})(x {:+})`</span></li></br></br>".format(a, -r1.real, -r2.real)
 else:
-    print "\tAvec j^2 = -1"
-    print "\tRacine complexe 1 = (-%s - sqrt(%s)) / (2*%s) = %s" % (str(b), str(delta), str(a), str(r1))
-    print "\tRacine complexe 2 = (-%s + sqrt(%s)) / (2*%s) = %s" % (str(b), str(delta), str(a), str(r2))
+    if a.imag == 0:
+        a = a.real
+    if b.imag == 0:
+        b = b.real
+    if c.imag == 0:
+        c = c.real
 
-if delta.real >= 0:
-    print "Forme factorisée :\n%s(x - %s)(x - %s)" % (a, str(r1.real), str(r2.real))
-else:
-    print "Forme factorisée :\n%s(x - %s)(x - %s)" % (a, str(r1), str(r2))
+    canonique = "`{}(x {:+}{:+}j)^2 {:+}{:+}j`".format(a, -alpha.real, alpha.imag, beta.real, beta.imag)
+    print "<li><h3>Forme canonique :</h3> <span class=\"bigger\">{}</span></li></br></br>".format(canonique)
+    print "<center style=\"font-size: 2.0em;\">Avec `j^2 = -1`</center>"
+    print "<li><h3>Racine complexe 1 : </h3><span class=\"bigger\">`x_1 = (-{}-sqrt({}))/(2*{})={} `</span></li></br></br>".format(b, delta, a, r1)
+    print "<li><h3>Racine complexe 2 : </h3><span class=\"bigger\">`x_2 = (-{}+sqrt({}))/(2*{})={} `</span></li></br></br>".format(b, delta, a, r2)
+    print "<li><h3>Forme factorisée :</h3> <span class=\"bigger\">`{}(x {:+}{:+}j)(x {:+}{:+}j)`</span></li></br></br>".format(a, -r1.real, r1.imag, -r2.real, r2.imag)
 
-while True:
-    x = raw_input("\n\n(Entrez la lettre x pour quitter)\nTestez %sx^2 + %sx +%s pour x = " % (a, b, c))
-
-    if("x" in x):
-        exit()
-
-    x = complex(x)
-    if(x.imag == 0):
-        x = x.real
-
-    cano_result = a * pow((x - alpha),2) + beta
-    cano_str = "%s(%s - %s)^2 + %s = %s" % (str(a), str(x), str(alpha), str(beta), str(cano_result))
-    print cano_str
-
-    dev_result = a * pow(x, 2) + b * x + c
-    dev_str = "%sx%s + %sx%s + %s = %s" % (str(a), str(x), str(b), str(x), str(c), str(dev_result))
-    print dev_str
-
-    facto_result = a * (x - r1) * (x - r2)
-    if delta.real >= 0:
-        print "%s(x - %s)(x - %s) = %s" % (a, str(r1.real), str(r2.real), str(facto_result.real))
-    else:
-        print "%s(x - %s)(x - %s) = %s" % (a, str(r1), str(r2), str(facto_result))
+print "</ul>"
+print "</br>"
+print "</br><hr>"
+print "<center><a href=\"http://sa.muel.coffee\"><i class=\"text-muted\">Coded &amp; Designer by Samuel Prevost &copy; 2015 - 2017</i></a></center>"
+print "</body>"
+print "</html>"
