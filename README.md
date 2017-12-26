@@ -1,4 +1,4 @@
-# CanoniPy V2.0
+# CanoniPy V3.0
 --
 ### Par Samuel Prevost
 Algorithme de résolution de polynômes du second degré
